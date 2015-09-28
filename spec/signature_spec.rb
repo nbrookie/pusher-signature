@@ -1,12 +1,12 @@
 require File.expand_path('../spec_helper', __FILE__)
 
-describe Signature do
+describe Pusher::Signature do
   before :each do
     Time.stub!(:now).and_return(Time.at(1234))
 
-    @token = Signature::Token.new('key', 'secret')
+    @token = Pusher::Signature::Token.new('key', 'secret')
 
-    @request = Signature::Request.new('POST', '/some/path', {
+    @request = Pusher::Signature::Request.new('POST', '/some/path', {
       "query" => "params",
       "go" => "here"
     })
@@ -110,13 +110,13 @@ describe Signature do
     end
 
     it "should verify requests" do
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       request.authenticate_by_token(@token).should == true
     end
 
     it "should raise error if signature is not correct" do
       @params[:auth_signature] =  'asdf'
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       lambda {
         request.authenticate_by_token!(@token)
       }.should raise_error('Invalid signature: you should have sent HmacSHA256Hex("POST\n/some/path\nauth_key=key&auth_timestamp=1234&auth_version=1.0&go=here&query=params", your_secret_key), but you sent "asdf"')
@@ -124,14 +124,14 @@ describe Signature do
 
     it "should raise error if timestamp not available" do
       @params.delete(:auth_timestamp)
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       lambda {
         request.authenticate_by_token!(@token)
       }.should raise_error('Timestamp required')
     end
 
     it "should raise error if timestamp has expired (default of 600s)" do
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       Time.stub!(:now).and_return(Time.at(1234 + 599))
       request.authenticate_by_token!(@token).should == true
       Time.stub!(:now).and_return(Time.at(1234 - 599))
@@ -148,7 +148,7 @@ describe Signature do
 
     it "should be possible to customize the timeout grace period" do
       grace = 10
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       Time.stub!(:now).and_return(Time.at(1234 + grace - 1))
       request.authenticate_by_token!(@token, grace).should == true
       Time.stub!(:now).and_return(Time.at(1234 + grace))
@@ -158,14 +158,14 @@ describe Signature do
     end
 
     it "should be possible to skip timestamp check by passing nil" do
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       Time.stub!(:now).and_return(Time.at(1234 + 1000))
       request.authenticate_by_token!(@token, nil).should == true
     end
-    
+
     it "should check that auth_version is supplied" do
       @params.delete(:auth_version)
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       lambda {
         request.authenticate_by_token!(@token)
       }.should raise_error('Version required')
@@ -173,15 +173,15 @@ describe Signature do
 
     it "should check that auth_version equals 1.0" do
       @params[:auth_version] = '1.1'
-      request = Signature::Request.new('POST', '/some/path', @params)
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
       lambda {
         request.authenticate_by_token!(@token)
       }.should raise_error('Version not supported')
     end
 
     it "should validate that the provided token has a non-empty secret" do
-      token = Signature::Token.new('key', '')
-      request = Signature::Request.new('POST', '/some/path', @params)
+      token = Pusher::Signature::Token.new('key', '')
+      request = Pusher::Signature::Request.new('POST', '/some/path', @params)
 
       lambda {
         request.authenticate_by_token!(token)
@@ -190,7 +190,7 @@ describe Signature do
 
     describe "when used with optional block" do
       it "should optionally take a block which yields the signature" do
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         request.authenticate do |key|
           key.should == @token.key
           @token
@@ -199,21 +199,21 @@ describe Signature do
 
       it "should raise error if no auth_key supplied to request" do
         @params.delete(:auth_key)
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         lambda {
           request.authenticate { |key| nil }
         }.should raise_error('Missing parameter: auth_key')
       end
 
       it "should raise error if block returns nil (i.e. key doesn't exist)" do
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         lambda {
           request.authenticate { |key| nil }
         }.should raise_error('Unknown auth_key')
       end
 
       it "should raise unless block given" do
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         lambda {
           request.authenticate
         }.should raise_error(ArgumentError, "Block required")
@@ -225,7 +225,7 @@ describe Signature do
       default_timeout 1
 
       it "returns a deferrable which succeeds if authentication passes" do
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         em {
           df = EM::DefaultDeferrable.new
 
@@ -243,7 +243,7 @@ describe Signature do
       end
 
       it "returns a deferrable which fails if block df fails" do
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         em {
           df = EM::DefaultDeferrable.new
 
@@ -254,7 +254,7 @@ describe Signature do
           df.fail()
 
           request_df.errback { |e|
-            e.class.should == Signature::AuthenticationError
+            e.class.should == Pusher::Signature::AuthenticationError
             e.message.should == 'Unknown auth_key'
             done
           }
@@ -262,7 +262,7 @@ describe Signature do
       end
 
       it "returns a deferrable which fails if request does not validate" do
-        request = Signature::Request.new('POST', '/some/path', @params)
+        request = Pusher::Signature::Request.new('POST', '/some/path', @params)
         em {
           df = EM::DefaultDeferrable.new
 
@@ -270,11 +270,11 @@ describe Signature do
             df
           end
 
-          token = Signature::Token.new('key', 'wrong_secret')
+          token = Pusher::Signature::Token.new('key', 'wrong_secret')
           df.succeed(token)
 
           request_df.errback { |e|
-            e.class.should == Signature::AuthenticationError
+            e.class.should == Pusher::Signature::AuthenticationError
             e.message.should =~ /Invalid signature/
             done
           }

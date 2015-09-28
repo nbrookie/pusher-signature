@@ -1,7 +1,7 @@
-signature
+pusher-signature
 =========
 
-[![Build Status](https://secure.travis-ci.org/mloughran/signature.png?branch=master)](http://travis-ci.org/mloughran/signature)
+[![Build Status](https://secure.travis-ci.org/pusher/pusher-signature.png?branch=master)](http://travis-ci.org/pusher/pusher-signature)
 
 Examples
 --------
@@ -10,8 +10,8 @@ Client example
 
 ```ruby
 params       = {:some => 'parameters'}
-token        = Signature::Token.new('my_key', 'my_secret')
-request      = Signature::Request.new('POST', '/api/thing', params)
+token        = Pusher::Signature::Token.new('my_key', 'my_secret')
+request      = Pusher::Signature::Request.new('POST', '/api/thing', params)
 auth_hash    = request.sign(token)
 query_params = params.merge(auth_hash)
 
@@ -35,16 +35,16 @@ HTTParty.post('http://myservice/api/thing', {
 Server example (sinatra)
 
 ```ruby
-error Signature::AuthenticationError do |controller|
+error Pusher::Signature::AuthenticationError do |controller|
   error = controller.env["sinatra.error"]
   halt 401, "401 UNAUTHORIZED: #{error.message}\n"
 end
 
 post '/api/thing' do
-  request = Signature::Request.new('POST', env["REQUEST_PATH"], params)
+  request = Pusher::Signature::Request.new('POST', env["REQUEST_PATH"], params)
   # This will raise a Signature::AuthenticationError if request does not authenticate
   token = request.authenticate do |key|
-    Signature::Token.new(key, lookup_secret(key))
+    Pusher::Signature::Token.new(key, lookup_secret(key))
   end
 
   # Do whatever you need to do
