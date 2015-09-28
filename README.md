@@ -62,4 +62,4 @@ Please see the travis status for a list of rubies tested against
 Copyright
 ---------
 
-Copyright (c) 2010 Martyn Loughran. See LICENSE for details.
+Copyright (c) 2010 Martyn Loughran, 2015 Pusher Ltd. See LICENSE for details.

@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name        = "pusher-signature"
   s.version     = Pusher::Signature::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Martyn Loughran"]
-  s.email       = ["me@mloughran.com"]
+  s.authors     = ["Martyn Loughran", "Pusher Ltd"]
+  s.email       = ["me@mloughran.com", "support@pusher.com"]
   s.homepage    = "http://github.com/pusher/pusher-signature"
   s.summary     = %q{Simple key/secret based authentication for apis}
   s.description = %q{Simple key/secret based authentication for apis}
