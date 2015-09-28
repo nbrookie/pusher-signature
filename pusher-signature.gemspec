@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "signature/version"
+require "pusher/signature/version"
 
 Gem::Specification.new do |s|
-  s.name        = "signature"
-  s.version     = Signature::VERSION
+  s.name        = "pusher-signature"
+  s.version     = Pusher::Signature::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Martyn Loughran"]
-  s.email       = ["me@mloughran.com"]
-  s.homepage    = "http://github.com/mloughran/signature"
+  s.authors     = ["Martyn Loughran", "Pusher Ltd"]
+  s.email       = ["me@mloughran.com", "support@pusher.com"]
+  s.homepage    = "http://github.com/pusher/pusher-signature"
   s.summary     = %q{Simple key/secret based authentication for apis}
   s.description = %q{Simple key/secret based authentication for apis}
 
@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
-  s.add_development_dependency "rspec"
+  s.add_development_dependency "rspec", "= 2.13.0"
   s.add_development_dependency "em-spec"
 end
