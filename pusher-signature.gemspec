@@ -16,8 +16,9 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+  s.license = 'MIT'
 
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
   s.add_development_dependency "rspec", "= 2.13.0"
-  s.add_development_dependency "em-spec"
+  s.add_development_dependency "em-spec", "= 0.2.6"
 end

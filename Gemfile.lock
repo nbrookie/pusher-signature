@@ -30,6 +30,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  em-spec
+  em-spec (= 0.2.6)
   pusher-signature!
   rspec (= 2.13.0)
