@@ -3,6 +3,8 @@ pusher-signature
 
 [![Build Status](https://secure.travis-ci.org/pusher/pusher-signature.png?branch=master)](http://travis-ci.org/pusher/pusher-signature)
 
+This gem is a fork of the [signature](https://github.com/mloughran/signature) gem, written by [Martyn Loughran](https://github.com/mloughran). It has now been released as a separate gem to resolve namespace collisions.
+
 Examples
 --------
 
