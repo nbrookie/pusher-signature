@@ -171,6 +171,10 @@ module Pusher
 
         def signature(token)
           digest = OpenSSL::Digest::SHA256.new
+          puts "PUSHER SIGNATURE:"
+          puts "  digest: #{digest}"
+          puts "  token.secret: #{token.secret}"
+          puts "  string_to_sign: #{string_to_sign}"
           OpenSSL::HMAC.hexdigest(digest, token.secret, string_to_sign)
         end
 
